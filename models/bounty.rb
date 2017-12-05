@@ -85,7 +85,6 @@ def update()
     db.close()
     found = bounty.map{|bounty| Bounty.new(bounty)}
     return found
-    p found
 
   end
 

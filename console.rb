@@ -24,6 +24,6 @@ bounty2 = Bounty.new({
   #
   # bounties = Bounty.all()
 
-  Bounty.find(75)
+  p Bounty.find(75)
   binding.pry
   nil
