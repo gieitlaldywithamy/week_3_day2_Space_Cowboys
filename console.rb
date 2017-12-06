@@ -23,7 +23,7 @@ bounty2 = Bounty.new({
   # bounty2.save()
   #
   # bounties = Bounty.all()
-
-  p Bounty.find(75)
+  Bounty.delete_by_id(2)
+  p Bounty.find(4)
   binding.pry
   nil

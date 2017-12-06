@@ -3,6 +3,7 @@ require('pg')
 
 class Bounty
 
+  attr_reader(:id)
   attr_accessor :name, :value, :favourite_weapon, :danger_level
 
   def initialize(options)
@@ -22,7 +23,7 @@ class Bounty
     p bounties.to_a()
     p bounties
     db.close()
-    return bounties.map {|bounty| Bounty.new(bounty)}
+    return bounties.map {|bounty_hash| Bounty.new(bounty)}
   end
 
 
@@ -34,11 +35,12 @@ class Bounty
 
         VALUES
         ($1, $2, $3, $4)
-        RETURNING *
+        RETURNING id
         "
-
+        #confused why you can return id here
         values = [@name, @value, @favourite_weapon, @danger_level]
         db.prepare("save", sql)
+
         @id = db.exec_prepared("save", values)[0]['id'].to_i
         db.close()
       end
@@ -57,6 +59,15 @@ def update()
       db.prepare("update", sql)
       db.exec_prepared("update", values)
       db.close()
+  end
+
+  def Bounty.delete_by_id(id)
+    db = PG.connect({dbname: 'space_cowboys', host: 'localhost'})
+    sql = "DELETE FROM bounties WHERE id = $1"
+    values = [id]
+    db.prepare("delete_by_id", sql)
+    db.exec_prepared("delete_by_id", values)
+    db.close()
   end
 
   def delete()
@@ -81,10 +92,11 @@ def update()
     sql = "SELECT * FROM bounties WHERE id = $1"
     values = [id]
     db.prepare("find", sql)
-    bounty = db.exec_prepared("find", values)
+    results_array = db.exec_prepared("find", values)
+    bounty_hash = results_array[0]
     db.close()
-    found = bounty.map{|bounty| Bounty.new(bounty)}
-    return found
+    bounty = Bounty.new(bounty_hash)
+    return bounty
 
   end
 
